@@ -1,0 +1,32 @@
+LOG 1400229255596 [L9]: <ERR> (in GamePlayer) There are no legal moves defined for black in [( true ( step 2 ) ), ( true ( control black ) )]
+	at org.ggp.base.util.statemachine.implementation.prover.ProverStateMachine.getLegalMoves(ProverStateMachine.java:90)
+	at org.ggp.base.util.statemachine.cache.CachedStateMachine.getLegalMoves(CachedStateMachine.java:76)
+	at user.MCTS.stateMachineSelectMove(MCTS.java:145)
+	at org.ggp.base.player.gamer.statemachine.StateMachineGamer.selectMove(StateMachineGamer.java:210)
+	at org.ggp.base.player.request.grammar.PlayRequest.process(PlayRequest.java:49)
+	at org.ggp.base.player.GamePlayer.run(GamePlayer.java:90)
+LOG 1400229255597 [L9]: <ERR> (in GamePlayer) An unhandled exception ocurred during move selection: org.ggp.base.player.gamer.exception.MoveSelectionException: There are no legal moves defined for black in [( true ( step 2 ) ), ( true ( control black ) )]
+	at org.ggp.base.player.gamer.statemachine.StateMachineGamer.selectMove(StateMachineGamer.java:215)
+	at org.ggp.base.player.request.grammar.PlayRequest.process(PlayRequest.java:49)
+	at org.ggp.base.player.GamePlayer.run(GamePlayer.java:90)
+Caused by: There are no legal moves defined for black in [( true ( step 2 ) ), ( true ( control black ) )]
+	at org.ggp.base.util.statemachine.implementation.prover.ProverStateMachine.getLegalMoves(ProverStateMachine.java:90)
+	at org.ggp.base.util.statemachine.cache.CachedStateMachine.getLegalMoves(CachedStateMachine.java:76)
+	at user.MCTS.stateMachineSelectMove(MCTS.java:145)
+	at org.ggp.base.player.gamer.statemachine.StateMachineGamer.selectMove(StateMachineGamer.java:210)
+	... 2 more
+LOG 1400229255628 [L9]: <ERR> (in GamePlayer) java.lang.NullPointerException
+	at user.Tree.setRoot(Tree.java:23)
+	at user.MCTS.stateMachineSelectMove(MCTS.java:160)
+	at org.ggp.base.player.gamer.statemachine.StateMachineGamer.selectMove(StateMachineGamer.java:210)
+	at org.ggp.base.player.request.grammar.PlayRequest.process(PlayRequest.java:49)
+	at org.ggp.base.player.GamePlayer.run(GamePlayer.java:90)
+LOG 1400229255628 [L9]: <ERR> (in GamePlayer) An unhandled exception ocurred during move selection: org.ggp.base.player.gamer.exception.MoveSelectionException: java.lang.NullPointerException
+	at org.ggp.base.player.gamer.statemachine.StateMachineGamer.selectMove(StateMachineGamer.java:215)
+	at org.ggp.base.player.request.grammar.PlayRequest.process(PlayRequest.java:49)
+	at org.ggp.base.player.GamePlayer.run(GamePlayer.java:90)
+Caused by: java.lang.NullPointerException
+	at user.Tree.setRoot(Tree.java:23)
+	at user.MCTS.stateMachineSelectMove(MCTS.java:160)
+	at org.ggp.base.player.gamer.statemachine.StateMachineGamer.selectMove(StateMachineGamer.java:210)
+	... 2 more

@@ -1,0 +1,20 @@
+LOG 1400251548246 [L9]: <ERR> (in GamePlayer) java.lang.IllegalArgumentException: Graph must be non-null
+	at edu.uci.ics.jung.algorithms.layout.TreeLayout.<init>(TreeLayout.java:91)
+	at edu.uci.ics.jung.algorithms.layout.TreeLayout.<init>(TreeLayout.java:75)
+	at user.DebugWindow.<init>(DebugWindow.java:57)
+	at user.MCTS.stateMachineMetaGame(MCTS.java:159)
+	at org.ggp.base.player.gamer.statemachine.StateMachineGamer.metaGame(StateMachineGamer.java:175)
+	at org.ggp.base.player.request.grammar.StartRequest.process(StartRequest.java:59)
+	at org.ggp.base.player.GamePlayer.run(GamePlayer.java:90)
+LOG 1400251548246 [L9]: <ERR> (in GamePlayer) An unhandled exception occurred during metagaming: org.ggp.base.player.gamer.exception.MetaGamingException: java.lang.IllegalArgumentException: Graph must be non-null
+	at org.ggp.base.player.gamer.statemachine.StateMachineGamer.metaGame(StateMachineGamer.java:180)
+	at org.ggp.base.player.request.grammar.StartRequest.process(StartRequest.java:59)
+	at org.ggp.base.player.GamePlayer.run(GamePlayer.java:90)
+Caused by: java.lang.IllegalArgumentException: Graph must be non-null
+	at edu.uci.ics.jung.algorithms.layout.TreeLayout.<init>(TreeLayout.java:91)
+	at edu.uci.ics.jung.algorithms.layout.TreeLayout.<init>(TreeLayout.java:75)
+	at user.DebugWindow.<init>(DebugWindow.java:57)
+	at user.MCTS.stateMachineMetaGame(MCTS.java:159)
+	at org.ggp.base.player.gamer.statemachine.StateMachineGamer.metaGame(StateMachineGamer.java:175)
+	... 2 more
+LOG 1400251548468 [L9]: <ERR> (in GamePlayer) Got play message not intended for current game: ignoring.
