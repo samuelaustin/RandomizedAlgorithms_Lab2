@@ -48,11 +48,11 @@ public final class MCTS extends StateMachineGamer
 	private Node selectBestChild()
 	{
 		Node n = null;
-		float max = -1;
+		double max = -1;
 		for(int i=0;i<tree.getRoot().getNumberOfChildren();i++)
-			if(tree.getRoot().getChild(i).getRatio()>max)
+			if(tree.getRoot().getChild(i).getUCT()>max)
 			{
-				max = tree.getRoot().getChild(i).getRatio();
+				max = tree.getRoot().getChild(i).getUCT();
 				n = tree.getRoot().getChild(i);
 			}
 		return n;
