@@ -1,5 +1,6 @@
 package user;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
@@ -17,6 +18,7 @@ import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.samples.SimpleGraphDraw;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 
 public class DebugWindow extends JFrame{
 
@@ -41,7 +43,7 @@ public class DebugWindow extends JFrame{
 	public DebugWindow(Tree tree) {
 		super();
 
-		setSize(800,800);
+		setSize(1024,512);
 		setTitle("MCTS Debug");
 
 		//super(new GridBagLayout());
@@ -55,13 +57,14 @@ public class DebugWindow extends JFrame{
 
 		// sets the initial size of the space
 		// The BasicVisualizationServer<V,E> is parameterized by the edge types
-        vv =  new VisualizationViewer<Tree.Node,Integer>(treeLayout, new Dimension(600,600));
+
+        vv =  new VisualizationViewer<Tree.Node,Integer>(treeLayout, new Dimension(1024,512));
 
         //vv.getRenderContext().setVertexFillPaintTransformer(new VertexPaintTransformer(vv.getPickedVertexState()));
 
         vv.getRenderContext().setVertexLabelTransformer(new Transformer<Node,String>(){
         	@Override
-			public String transform(Node n){return ""+n.getRatio();}
+			public String transform(Node n){return ""+(n.getScore()/100)+"/"+n.getNumberVisits();}
         });
 
         vv.getRenderContext().setVertexFillPaintTransformer(new Transformer<Node, Paint>(){
@@ -78,7 +81,8 @@ public class DebugWindow extends JFrame{
 
 
         final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
-        this.getContentPane().add(panel);
+        this.getContentPane().add(vv);
+        vv.setGraphMouse(new DefaultModalGraphMouse<>());
 		this.setVisible(true);
 		this.pack();
 		setVisible(true);
@@ -87,13 +91,22 @@ public class DebugWindow extends JFrame{
 	public void visualizeTree(Tree tree)
 	{
 		tree.lock();
+	//	DelegateForest<Node, Integer> empty = new DelegateForest<Tree.Node,Integer>();
 		graph = new DelegateForest<Tree.Node,Integer>();
 		for(Node n : tree.getNodes())
 			graph.addVertex(n);
 		for(Node n : tree.getNodes())
 			if(n.getParent()!=null)
 				graph.addEdge(edgeFactory.create(),n.getParent(),n);
-		treeLayout.setGraph(graph);
+
+
+		BorderLayout m = new BorderLayout();
+
+		TreeLayout<Tree.Node,Integer> layout = new TreeLayout<Tree.Node,Integer>(graph);
+
+		//LayoutManager m = new LayoutManager();
+		vv.setGraphLayout(layout);
+		//treeLayout.setGraph(graph);
 		vv.repaint();
 		this.pack();
 		tree.unlock();

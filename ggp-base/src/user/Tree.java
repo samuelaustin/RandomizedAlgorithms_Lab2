@@ -2,6 +2,7 @@ package user;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -36,7 +37,6 @@ public final class Tree {
 		lock.unlock();
 	}
 
-
 	public Node getRoot(){return root;}
 	public void setRoot(Node node)
 	{
@@ -48,7 +48,7 @@ public final class Tree {
 		{
 			parent.children.remove(node);
 		}
-		nodes = new ArrayList<Node>();
+		nodes = new Vector<Node>();
 		setTreeNodesRecursive(root);
 	}
 
@@ -68,7 +68,7 @@ public final class Tree {
 		nodes.remove(node);
 	}
 
-	public Node addNode(Node parent, List<Move> move, MachineState state)
+	public synchronized Node addNode(Node parent, List<Move> move, MachineState state)
 	{
 		if(nodes.contains(parent))
 		{
@@ -94,7 +94,7 @@ public final class Tree {
 		return false;
 	}
 
-	public List<Node> getNodes()
+	public synchronized List<Node> getNodes()
 	{
 		return nodes;
 	}
@@ -105,11 +105,20 @@ public final class Tree {
 		return root.toString();
 	}
 
-	public double getUCT()
+	public double getExplorationUCT()
 	{
 		double UCT = 0;
 		for(Node n:nodes)
-			UCT+=n.getUCT();
+			UCT+=n.getExplorationUCT();
+
+		return UCT;
+	}
+
+	public double getSelectionUCT()
+	{
+		double UCT = 0;
+		for(Node n:nodes)
+			UCT+=n.getSelectionUCT();
 		return UCT;
 	}
 
@@ -133,7 +142,7 @@ public final class Tree {
 			parent = null;
 		}
 
-		public void addScore(int s)
+		public synchronized void addScore(int s)
 		{
 			score+=s;
 			visits++;
@@ -167,16 +176,29 @@ public final class Tree {
 				return ((float)score)/((float)visits);
 		}
 
-		public double getUCT()
+		public double getExplorationUCT()
 		{
+			if(getNumberVisits()>0)
+			{
+				double parentScore = 0;
+				if(parent!=null)
+					parentScore = parent.getNumberVisits();
 
+				return getRatio()/100 + 2*2.0/Math.sqrt(2.0)*Math.sqrt(2*Math.log(parentScore+1)/getNumberVisits());
+			}
+			else
+				return 0;
+		}
+
+		public double getSelectionUCT()
+		{
 			if(getNumberVisits() > 0)
 			{
 				double parentScore = 0;
 				if(parent!=null)
 					parentScore = parent.getNumberVisits();
 
-				return getRatio() + 2*2.0/Math.sqrt(2.0)*Math.sqrt(2*Math.log(parentScore+1)/getNumberVisits());
+				return getRatio()/100+2*2.0/Math.sqrt(2.0)*Math.sqrt(2*Math.log(parentScore+1)/getNumberVisits());
 			}
 			else
 				return Double.MAX_VALUE;
@@ -188,16 +210,16 @@ public final class Tree {
 
 		public int getNumberOfChildren(){return children.size();}
 
-		public List<Node> getChildren() { return children; }
+		public synchronized List<Node> getChildren() { return children; }
 
-		private Node addNode(List<Move> move, MachineState state)
+		private synchronized Node addNode(List<Move> move, MachineState state)
 		{
 			Node node = new Node(move,state);
 			node.parent = this;
 			children.add(node);
 			return node;
 		}
-		public Node addNode(Node node)
+		public synchronized Node addNode(Node node)
 		{
 			node.parent = this;
 			children.add(node);
