@@ -45,9 +45,8 @@ public final class Tree {
 		root = node;
 
 		if(parent != null)
-		{
 			parent.children.remove(node);
-		}
+
 		nodes = new Vector<Node>();
 		setTreeNodesRecursive(root);
 	}
@@ -62,9 +61,8 @@ public final class Tree {
 	public void removeRecursive(Node node)
 	{
 		for(int i = 0; i < node.children.size(); i++)
-		{
 			removeRecursive(node.getChild(i));
-		}
+
 		nodes.remove(node);
 	}
 
@@ -85,12 +83,9 @@ public final class Tree {
 	public boolean containsNode(Node n)
 	{
 		for(int i = 0; i < nodes.size(); i++)
-		{
 			if(nodes.get(i).equals(n))
-			{
 				return true;
-			}
-		}
+
 		return false;
 	}
 
@@ -105,20 +100,12 @@ public final class Tree {
 		return root.toString();
 	}
 
-	public double getExplorationUCT()
+	public double getUCT()
 	{
 		double UCT = 0;
 		for(Node n:nodes)
-			UCT+=n.getExplorationUCT();
+			UCT+=n.getUCT();
 
-		return UCT;
-	}
-
-	public double getSelectionUCT()
-	{
-		double UCT = 0;
-		for(Node n:nodes)
-			UCT+=n.getSelectionUCT();
 		return UCT;
 	}
 
@@ -176,7 +163,7 @@ public final class Tree {
 				return ((float)score)/((float)visits);
 		}
 
-		public double getExplorationUCT()
+		public double getUCT()
 		{
 			if(getNumberVisits()>0)
 			{
@@ -184,24 +171,10 @@ public final class Tree {
 				if(parent!=null)
 					parentScore = parent.getNumberVisits();
 
-				return getRatio()/100 + 2*2.0/Math.sqrt(2.0)*Math.sqrt(2*Math.log(parentScore+1)/getNumberVisits());
+				return getRatio()/100 + 2*1.0/Math.sqrt(2.0)*Math.sqrt(2*Math.log(parentScore+1)/getNumberVisits());
 			}
 			else
 				return 0;
-		}
-
-		public double getSelectionUCT()
-		{
-			if(getNumberVisits() > 0)
-			{
-				double parentScore = 0;
-				if(parent!=null)
-					parentScore = parent.getNumberVisits();
-
-				return getRatio()/100+2*2.0/Math.sqrt(2.0)*Math.sqrt(2*Math.log(parentScore+1)/getNumberVisits());
-			}
-			else
-				return Double.MAX_VALUE;
 		}
 
 		public Node getParent(){return parent;}
@@ -212,13 +185,6 @@ public final class Tree {
 
 		public synchronized List<Node> getChildren() { return children; }
 
-		private synchronized Node addNode(List<Move> move, MachineState state)
-		{
-			Node node = new Node(move,state);
-			node.parent = this;
-			children.add(node);
-			return node;
-		}
 		public synchronized Node addNode(Node node)
 		{
 			node.parent = this;
@@ -261,15 +227,5 @@ public final class Tree {
 			ans += "]";
 			return ans;
 		}
-	}
-
-	public static void main(String[] args)
-	{
-		Tree tree = new Tree(null,null);
-		tree.getRoot().addScore(0);
-		Node n = new Node(null,null);
-		tree.getRoot().addNode(n);
-		n.addScore(1);
-		System.out.println(tree);
 	}
 }

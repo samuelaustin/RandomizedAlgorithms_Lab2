@@ -41,7 +41,6 @@ public class TreeExpander extends Thread{
 		while(runtime+1<timeout-System.currentTimeMillis())
 		{
 			runtime=expandTree(selectNode());
-			//System.out.println("Thread " + this.getId() + ": " + tree.getNodes().size());
 		}
 	}
 
@@ -52,12 +51,12 @@ public class TreeExpander extends Thread{
 			if(root_expander)
 				return tree.getRoot();
 
-			double rand = ThreadLocalRandom.current().nextDouble()*tree.getExplorationUCT();
+			double rand = ThreadLocalRandom.current().nextDouble()*tree.getUCT();
 			double sumUCT = 0;
 			Node selected = null;
 			for(Node n:tree.getNodes())
 			{
-				double nextUCT = n.getExplorationUCT();
+				double nextUCT = n.getUCT();
 				if(rand >= sumUCT && rand <= (sumUCT+nextUCT))
 				{
 					selected = n;
@@ -68,7 +67,7 @@ public class TreeExpander extends Thread{
 			}
 			return selected;
 		}
-		catch(ConcurrentModificationException e){System.out.println("Concurent modification restart!!");return selectNode();}
+		catch(ConcurrentModificationException e){return selectNode();}
 	}
 
 	private long expandTree(Node node)
@@ -101,7 +100,7 @@ public class TreeExpander extends Thread{
 			else
 				return 0;
 		}
-		catch(Exception e) {System.out.println("Could not perform monte_carlo_search");e.printStackTrace();return -1;}
+		catch(Exception e) {e.printStackTrace();return -1;}
 	}
 
 	private void monte_carlo_search(Tree.Node current, int itterations)
@@ -111,7 +110,7 @@ public class TreeExpander extends Thread{
 			for(int i=0;i<itterations;i++)
 				probe(current.getState(), current);
 		}
-		catch(Exception e){System.out.println("EXCEOTUSDIJAHFJKLHALGKLSDJAFY");e.printStackTrace();}
+		catch(Exception e){e.printStackTrace();}
 	}
 
 	private void probe(MachineState state, Tree.Node node) throws GoalDefinitionException, MoveDefinitionException, TransitionDefinitionException

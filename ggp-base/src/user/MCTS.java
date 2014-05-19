@@ -27,7 +27,8 @@ public final class MCTS extends StateMachineGamer implements Runnable
 	private int roleNumber = 0;
 	private DebugWindow win;
 	private boolean multiThreaded = true;
-	private boolean visualize = false;
+	private boolean visualize = true;
+	private int cores = Runtime.getRuntime().availableProcessors();
 
 	@Override
 	public void run() {
@@ -42,7 +43,7 @@ public final class MCTS extends StateMachineGamer implements Runnable
 			for(int i=0;i<itterations;i++)
 				probe(current.getState(), current);
 		}
-		catch(Exception e){System.out.println("EXCEOTUSDIJAHFJKLHALGKLSDJAFY");e.printStackTrace();}
+		catch(Exception e){e.printStackTrace();}
 	}
 
 	private Node selectBestChild()
@@ -61,12 +62,12 @@ public final class MCTS extends StateMachineGamer implements Runnable
 	private Node selectNode()
 	{
 		Random r = new Random();
-		double rand = r.nextDouble()*tree.getExplorationUCT();
+		double rand = r.nextDouble()*tree.getUCT();
 		double sumUCT = 0;
 		Node selected = null;
 		for(Node n:tree.getNodes())
 		{
-			double nextUCT = n.getExplorationUCT();
+			double nextUCT = n.getUCT();
 			if(rand >= sumUCT && rand <= (sumUCT+nextUCT))
 			{
 				selected = n;
@@ -91,9 +92,7 @@ public final class MCTS extends StateMachineGamer implements Runnable
 
 				Node child = node.getChild(move,childState);
 				if(child != null)
-				{
 					monte_carlo_search(child,3);
-				}
 				else
 				{
 					child = tree.addNode(node, move, childState);
@@ -121,33 +120,22 @@ public final class MCTS extends StateMachineGamer implements Runnable
 				}
 
 		if(tree.getRoot().getState().toString().compareTo(getCurrentState().toString())!=0)
-		{
-			System.out.println("CREATE NEW TREE");
 			tree = new Tree(null, getCurrentState());
-		}
-
-
 
 		if(multiThreaded)
 		{
 			List<TreeExpander> threads = new ArrayList<TreeExpander>();
-			int numThreads = 8;
-			long runtime = 0;
 			try {
-				long start = System.currentTimeMillis();
-
-				for(int i = 0 ; i < numThreads; i++)
+				for(int i = 0 ; i < cores; i++)
 					threads.add(new TreeExpander(getStateMachine(), tree, getRole(), timeout));
 
 				threads.get(0).setRootExpander();
 
-				for(int i = 0; i < numThreads; i++)
+				for(int i = 0; i < cores; i++)
 					threads.get(i).start();
-				for(int i = 0; i < numThreads; i++)
+				for(int i = 0; i < cores; i++)
 					threads.get(i).join();
 
-				long stop = System.currentTimeMillis();
-				runtime += stop-start;
 			} catch (InterruptedException e) {e.printStackTrace();}
 		}
 		else
@@ -216,12 +204,6 @@ public final class MCTS extends StateMachineGamer implements Runnable
 			state = getStateMachine().getRandomNextState(state);
 
 		node.addScore( getStateMachine().getGoal(state, getRole()) );
-	}
-
-	private int probe2(MachineState state) throws GoalDefinitionException, MoveDefinitionException, TransitionDefinitionException
-	{
-		final int[] depth = new int[1];
-		return getStateMachine().getGoal(getStateMachine().performDepthCharge(state, depth), getRole());
 	}
 
 	@Override
